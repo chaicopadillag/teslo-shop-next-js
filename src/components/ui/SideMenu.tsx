@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
 import {
   AccountCircleOutlined,
@@ -11,10 +12,18 @@ import {
   SearchOutlined,
   VpnKeyOutlined,
 } from '@mui/icons-material';
+import { useRouter } from 'next/router';
+import { UIContext } from '../../contexts';
 
 export const SideMenu = () => {
+  const { push } = useRouter();
+  const { isOpenSidebar, toggleSidebar } = useContext(UIContext);
+  const onNavTo = (url: string) => {
+    toggleSidebar();
+    push(url);
+  };
   return (
-    <Drawer open={false} anchor='right' sx={{ backdropFilter: 'blur(4px)', transition: 'all 0.5s ease-out' }}>
+    <Drawer open={isOpenSidebar} anchor='right' sx={{ backdropFilter: 'blur(4px)', transition: 'all 0.5s ease-out' }} onClose={toggleSidebar}>
       <Box sx={{ width: 250, paddingTop: 5 }}>
         <List>
           <ListItem>
@@ -45,21 +54,21 @@ export const SideMenu = () => {
             <ListItemText primary={'Mis Ordenes'} />
           </ListItem>
 
-          <ListItem button sx={{ display: { xs: '', sm: 'none' } }}>
+          <ListItem button sx={{ display: { xs: '', sm: 'none' } }} onClick={() => onNavTo('/men')}>
             <ListItemIcon>
               <MaleOutlined />
             </ListItemIcon>
             <ListItemText primary={'Hombres'} />
           </ListItem>
 
-          <ListItem button sx={{ display: { xs: '', sm: 'none' } }}>
+          <ListItem button sx={{ display: { xs: '', sm: 'none' } }} onClick={() => onNavTo('/women')}>
             <ListItemIcon>
               <FemaleOutlined />
             </ListItemIcon>
             <ListItemText primary={'Mujeres'} />
           </ListItem>
 
-          <ListItem button sx={{ display: { xs: '', sm: 'none' } }}>
+          <ListItem button sx={{ display: { xs: '', sm: 'none' } }} onClick={() => onNavTo('/kid')}>
             <ListItemIcon>
               <EscalatorWarningOutlined />
             </ListItemIcon>

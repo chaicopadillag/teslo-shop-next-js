@@ -3,19 +3,22 @@ import { Typography } from '@mui/material';
 import { ShopLayout } from '../components/layouts';
 import { ProductsList } from '../components/products';
 import { initialData } from '../app/database/seeders/products';
+import { useFetchProducts } from '../hooks';
+import { FullScreenLoading } from '../components/ui';
 
-const Home: NextPage = () => {
+const HomePage: NextPage = () => {
+  const { products, isLoading } = useFetchProducts('/product');
   return (
     <ShopLayout title='Teslo Shop - Home' description='Fuga vel consequatur repudiandae commodi vel ut.' imageFullUrl='http://placeimg.com/640/480/nature'>
       <Typography variant='h1' component='h1'>
-        Tienda
+        La mejor colección Teslo
       </Typography>
       <Typography variant='h2' sx={{ mb: 1 }}>
         Todos los productos
       </Typography>
-      <ProductsList products={initialData.products as any} />
+      {isLoading ? <FullScreenLoading /> : <ProductsList products={products} />}
     </ShopLayout>
   );
 };
 
-export default Home;
+export default HomePage;
