@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { Typography } from '@mui/material';
 import { ShopLayout } from '../components/layouts';
 import { ProductsList } from '../components/products';
-import { initialData } from '../database/products';
+import { initialData } from '../app/database/seeders/products';
 
 const Home: NextPage = () => {
   return (

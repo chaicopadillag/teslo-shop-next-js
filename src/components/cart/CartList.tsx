@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import NextLink from 'next/link';
 import { Grid, Typography, Link, CardActionArea, CardMedia, Box, IconButton } from '@mui/material';
-import { initialData } from '../../database/products';
+import { initialData } from '../../app/database/seeders/products';
 import { ItemProductCounter } from '../products';
 import { RemoveShoppingCartOutlined } from '@mui/icons-material';
 

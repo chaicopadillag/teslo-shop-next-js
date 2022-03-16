@@ -12,6 +12,9 @@
 /.next/
 /out/
 
+# docker
+mongo
+
 # production
 /build
 

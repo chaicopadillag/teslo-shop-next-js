@@ -1,7 +1,7 @@
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { ShopLayout } from '../../components/layouts';
-import { initialData } from '../../database/products';
+import { initialData } from '../../app/database/seeders/products';
 import { ItemProductCounter, ProductSlideshow, SizeProductSelector } from '../../components/products';
 
 const product = initialData.products[0];
