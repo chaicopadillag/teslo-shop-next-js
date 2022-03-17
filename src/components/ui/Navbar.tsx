@@ -1,14 +1,21 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import NextLink from 'next/link';
-import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
+import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
+import { CloseOutlined, SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
 import { useRouter } from 'next/router';
 import { UIContext } from '../../contexts';
 
 export const Navbar = () => {
+  const [keyword, setKeyword] = useState('');
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
   const { toggleSidebar } = useContext(UIContext);
-  const { pathname } = useRouter();
+  const { pathname, push } = useRouter();
+
+  const onSearch = () => {
+    if (keyword.length <= 0) return;
+    push(`/search/${keyword}`);
+  };
 
   return (
     <AppBar>
@@ -21,7 +28,7 @@ export const Navbar = () => {
           </Link>
         </NextLink>
         <Box flex='1' />
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+        <Box sx={{ display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block' } }}>
           <NextLink href='/men' passHref>
             <Link>
               <Button color={pathname === '/men' ? 'primary' : 'info'}>Hombres</Button>
@@ -39,7 +46,46 @@ export const Navbar = () => {
           </NextLink>
         </Box>
         <Box flex='1' />
-        <IconButton>
+
+        {/* FIXME: Desktop */}
+
+        {isSearchVisible ? (
+          <Input
+            autoFocus
+            type='text'
+            placeholder='Buscar...'
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                onSearch();
+              }
+            }}
+            endAdornment={
+              <InputAdornment position='end'>
+                <IconButton onClick={() => setIsSearchVisible(false)}>
+                  <CloseOutlined />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        ) : (
+          <IconButton
+            sx={{
+              display: { xs: 'none', sm: 'flex' },
+            }}
+            onClick={() => setIsSearchVisible(true)}
+          >
+            <SearchOutlined />
+          </IconButton>
+        )}
+
+        {/* TODO: Movil */}
+        <IconButton
+          sx={{
+            display: { xs: 'flex', sm: 'none' },
+          }}
+          onClick={toggleSidebar}
+        >
           <SearchOutlined />
         </IconButton>
         <NextLink href='/cart' passHref>

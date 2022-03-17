@@ -18,7 +18,7 @@ export const ProductCard: FC<ProducCardProps> = ({ product }) => {
   return (
     <Grid item xs={12} sm={6} md={4} lg={3} onMouseEnter={() => setIsHoverImage(true)} onMouseLeave={() => setIsHoverImage(false)}>
       <Card>
-        <NextLink href='/product/slug' passHref prefetch={false}>
+        <NextLink href={`/product/${product.slug}`} passHref prefetch={false}>
           <Link>
             <CardActionArea>
               <CardMedia className='fadeIn' component='img' image={imageUrl} alt={product.title} onLoad={() => setIsImageLoaded(true)} />

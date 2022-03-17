@@ -1,12 +1,16 @@
+import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { ShopLayout } from '../../components/layouts';
-import { initialData } from '../../app/database/seeders/products';
 import { ItemProductCounter, ProductSlideshow, SizeProductSelector } from '../../components/products';
+import { IProduct } from '../../interfaces';
+import { productController } from '../../app/controllers';
 
-const product = initialData.products[0];
+type ProductPageProps = {
+  product: IProduct;
+};
 
-const ProductPage = () => {
+const ProductPage: NextPage<ProductPageProps> = ({ product }) => {
   return (
     <ShopLayout title={product.title} description={product.description} imageFullUrl={product.images[0]}>
       <Grid container spacing={3}>
@@ -47,4 +51,58 @@ const ProductPage = () => {
   );
 };
 
+export const getStaticPaths: GetStaticPaths = async (ctx) => {
+  const products = await productController.getProductsWithSlug();
+
+  const paths = products.map(({ slug }) => ({ params: { slug } }));
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { slug = '' } = params as { slug: string };
+
+  const product = await productController.getProductBySlug(slug);
+
+  if (!product) {
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      product,
+    },
+    revalidate: 864000,
+  };
+};
+
 export default ProductPage;
+
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+//   const { slug = '' } = params as { slug: string };
+
+//   const product = await productController.getProductBySlug(slug);
+
+//   if (!product) {
+//     return {
+//       redirect: {
+//         destination: '/404',
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {
+//       product,
+//     },
+//   };
+// };

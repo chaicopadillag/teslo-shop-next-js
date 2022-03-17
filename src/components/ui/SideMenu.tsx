@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
 import {
   AccountCircleOutlined,
@@ -17,22 +17,39 @@ import { UIContext } from '../../contexts';
 
 export const SideMenu = () => {
   const { push } = useRouter();
+  const [keyword, setKeyword] = useState('');
+
   const { isOpenSidebar, toggleSidebar } = useContext(UIContext);
+
+  const onSearch = () => {
+    if (keyword.length <= 0) return;
+
+    onNavTo(`/search/${keyword}`);
+  };
+
   const onNavTo = (url: string) => {
     toggleSidebar();
     push(url);
   };
+
   return (
     <Drawer open={isOpenSidebar} anchor='right' sx={{ backdropFilter: 'blur(4px)', transition: 'all 0.5s ease-out' }} onClose={toggleSidebar}>
       <Box sx={{ width: 250, paddingTop: 5 }}>
         <List>
           <ListItem>
             <Input
+              autoFocus
               type='text'
               placeholder='Buscar...'
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  onSearch();
+                }
+              }}
               endAdornment={
                 <InputAdornment position='end'>
-                  <IconButton aria-label='toggle password visibility'>
+                  <IconButton onClick={onSearch}>
                     <SearchOutlined />
                   </IconButton>
                 </InputAdornment>
