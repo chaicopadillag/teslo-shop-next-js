@@ -3,14 +3,32 @@ import Cookie from 'js-cookie';
 import { cartReducer } from '../reducers';
 import { ICartProduct } from '../interfaces';
 
+export type orderSumaryType = {
+  quantityItems: number;
+  subTotal: number;
+  tax: number;
+  total: number;
+};
+
 type cartContextState = {
   cart: ICartProduct[];
   addProductToCart: (product: ICartProduct) => void;
+  updateProductQuantityInCart: (product: ICartProduct) => void;
+  removeProductCart: (product: ICartProduct) => void;
+  orderSumary: orderSumaryType;
 };
 
 const cartInitialState: cartContextState = {
   cart: [],
   addProductToCart: (p) => {},
+  updateProductQuantityInCart: (p) => {},
+  removeProductCart: (p) => {},
+  orderSumary: {
+    quantityItems: 0,
+    subTotal: 0,
+    tax: 0,
+    total: 0,
+  },
 };
 
 export const CartContext = createContext<cartContextState>({} as cartContextState);
@@ -47,11 +65,36 @@ export const CartProvider: FC = ({ children }) => {
     dispatch({ type: 'ADD_UPDATE_PRODUCT_TO_CART', payload: updatedProd });
   };
 
+  const updateProductQuantityInCart = (product: ICartProduct) => {
+    dispatch({ type: 'UPDATE_QUANTITY_PRODUCT_IN_CART', payload: product });
+  };
+
+  const removeProductCart = (product: ICartProduct) => {
+    dispatch({ type: 'REMOVE_PRODUCT_FROM_CART', payload: product });
+  };
+
+  useEffect(() => {
+    const quantityItems = state.cart.reduce((prev, current) => prev + current.quantity, 0);
+    const subTotal = state.cart.reduce((prev, current) => prev + current.price * current.quantity, 0);
+    const tax = subTotal * Number(process.env.NEXT_PUBLIC_TAX_PERCENTAGE || 0.18);
+    const total = subTotal + tax;
+
+    const orderSumary = {
+      quantityItems,
+      subTotal,
+      tax,
+      total,
+    };
+    dispatch({ type: 'UPDATE_ORDER_SUMARY', payload: orderSumary });
+  }, [state.cart]);
+
   return (
     <CartContext.Provider
       value={{
         ...state,
         addProductToCart,
+        updateProductQuantityInCart,
+        removeProductCart,
       }}
     >
       {children}

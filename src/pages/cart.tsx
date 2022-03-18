@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { CartContext } from '../../contexts';
-import { CartShop, EmptyCart } from '../../components/cart';
-import { ShopLayout } from '../../components/layouts';
+import { CartContext } from '../contexts';
+import { CartShop, EmptyCart } from '../components/cart';
+import { ShopLayout } from '../components/layouts';
 
 const Cartpage = () => {
   const { cart } = useContext(CartContext);

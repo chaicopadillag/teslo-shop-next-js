@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material';
 import { Box, IconButton, Typography } from '@mui/material';
 
@@ -10,12 +10,12 @@ type ItemCounterProps = {
 
 export const ItemProductCounter: FC<ItemCounterProps> = ({ value, maxValue, onChange }) => {
   const onChangeValue = (val: number) => {
-    const quatity = Math.max(value + val, 0);
-
-    if (quatity <= 0) return;
-    if (quatity > maxValue) return;
-
-    onChange(quatity);
+    if (val === -1) {
+      if (value === 1) return;
+      return onChange(value - 1);
+    }
+    if (value >= maxValue) return;
+    onChange(value + 1);
   };
 
   return (

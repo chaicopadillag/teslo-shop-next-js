@@ -1,2 +1,2 @@
 export { UIContext, UIProvider } from './UIContext';
-export { CartContext, CartProvider } from './CartContext';
+export { type orderSumaryType, CartContext, CartProvider } from './CartContext';
