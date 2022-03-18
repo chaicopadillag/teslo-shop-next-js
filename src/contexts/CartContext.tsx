@@ -46,7 +46,7 @@ export const CartProvider: FC = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    Cookie.set('cart', JSON.stringify(state.cart));
+    Cookie.set('cart', JSON.stringify(state.cart), { sameSite: 'strict' });
   }, [state.cart]);
 
   const addProductToCart = (product: ICartProduct) => {
