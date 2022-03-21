@@ -15,8 +15,8 @@ type AuthContextState = {
 const AuthInitialState: AuthContextState = {
   isLoggedIn: false,
   authUser: null,
-  login: async (email: string, password: string) => false,
-  register: async (name: string, email: string, password: string) => ({ hasError: false, message: '' }),
+  login: async () => false,
+  register: async () => ({ hasError: false, message: '' }),
   logout: () => {},
 };
 
