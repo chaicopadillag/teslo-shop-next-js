@@ -1,2 +1,3 @@
-export { uiReducer } from './uiReducer';
+export { authReducer } from './authReducer';
 export { cartReducer } from './cartReducer';
+export { uiReducer } from './uiReducer';

@@ -4,12 +4,13 @@ import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, To
 import MenuIcon from '@mui/icons-material/Menu';
 import { CloseOutlined, SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
 import { useRouter } from 'next/router';
-import { UIContext } from '../../contexts';
+import { CartContext, UIContext } from '../../contexts';
 
 export const Navbar = () => {
   const [keyword, setKeyword] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const { toggleSidebar } = useContext(UIContext);
+  const { cart } = useContext(CartContext);
   const { pathname, push } = useRouter();
 
   const onSearch = () => {
@@ -91,7 +92,7 @@ export const Navbar = () => {
         <NextLink href='/cart' passHref>
           <Link>
             <Button>
-              <Badge badgeContent={2} color='secondary'>
+              <Badge badgeContent={cart.length > 9 ? '+9' : cart.length} color='secondary'>
                 <ShoppingCartOutlined />
               </Badge>
             </Button>
