@@ -93,6 +93,7 @@ export const AuthProvider: FC = ({ children }) => {
   const logout = () => {
     Cookies.remove('token', { path: '/', sameSite: 'strict' });
     Cookies.remove('cart', { path: '/', sameSite: 'strict' });
+    Cookies.remove('address', { path: '/', sameSite: 'strict' });
     router.reload();
     // dispatch({ type: 'LOGOUT', payload: null });
   };
