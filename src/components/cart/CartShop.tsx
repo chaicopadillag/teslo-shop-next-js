@@ -19,7 +19,7 @@ export const CartShop = () => {
               <Divider sx={{ my: 1 }} />
               <OrderSumary />
               <Box sx={{ mt: 3 }}>
-                <Button color='secondary' className='circular-btn' fullWidth sx={{ padding: '8px 0' }}>
+                <Button href='/checkout/address' color='secondary' className='circular-btn' fullWidth sx={{ padding: '8px 0' }}>
                   Checkout
                 </Button>
               </Box>

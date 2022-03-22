@@ -1,9 +1,11 @@
 import { orderSumaryType } from '../contexts';
 import { ICartProduct } from '../interfaces';
+import { ShippingAddressType } from '../interfaces';
 
 type CartStateType = {
   cart: ICartProduct[];
   orderSumary: orderSumaryType;
+  shippingAddress?: ShippingAddressType;
 };
 type CartActionType =
   | {
@@ -21,6 +23,10 @@ type CartActionType =
   | {
       type: 'UPDATE_ORDER_SUMARY';
       payload: orderSumaryType;
+    }
+  | {
+      type: 'SET_SHIPPING_ADDRESS';
+      payload: ShippingAddressType;
     };
 
 export const cartReducer = (cartState: CartStateType, action: CartActionType): CartStateType => {
@@ -53,6 +59,11 @@ export const cartReducer = (cartState: CartStateType, action: CartActionType): C
       return {
         ...cartState,
         orderSumary: action.payload,
+      };
+    case 'SET_SHIPPING_ADDRESS':
+      return {
+        ...cartState,
+        shippingAddress: action.payload,
       };
 
     default:

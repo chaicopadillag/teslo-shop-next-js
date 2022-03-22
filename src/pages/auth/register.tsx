@@ -3,9 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { Box, Button, Chip, Grid, Link, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { tesloApi } from '../../services';
 import { AuthLayout } from '../../components/layouts';
-import axios from 'axios';
 import { ErrorOutline } from '@mui/icons-material';
 import { validations } from '../../helpers';
 import { AuthContext } from '../../contexts';
@@ -36,7 +34,8 @@ const RegisterPage = () => {
         setErrorMessage(message);
         setTimeout(() => setShowError(false), 5000);
       } else {
-        router.replace('/');
+        const lastPath = router.query.p?.toString() || '/';
+        router.replace(lastPath);
       }
     } catch (error) {
       console.log('error register');
@@ -121,7 +120,7 @@ const RegisterPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} display='flex' justifyContent='center'>
-              <NextLink href='/auth/login' passHref>
+              <NextLink href={router.query.p ? `/auth/login?p=${router.query.p.toString()}` : '/auth/login'} passHref>
                 <Link underline='hover'>¿Ya tienes una cuenta? Inicia sesión</Link>
               </NextLink>
             </Grid>

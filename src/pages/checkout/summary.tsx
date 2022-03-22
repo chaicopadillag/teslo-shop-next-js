@@ -1,9 +1,22 @@
 import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from '@mui/material';
 import NextLink from 'next/link';
+import { useContext } from 'react';
+import { countries } from '../../app/database/seeders';
 import { CartList, OrderSumary } from '../../components/cart';
 import { ShopLayout } from '../../components/layouts';
+import { CartContext } from '../../contexts';
 
 const SummaryPage = () => {
+  const {
+    shippingAddress,
+    orderSumary: { quantityItems },
+  } = useContext(CartContext);
+
+  if (!shippingAddress) {
+    return <>No hay address</>;
+  }
+  const { name, surnames, country, email, city, address, postalCode, telephone } = shippingAddress;
+
   return (
     <ShopLayout title='Resumen de orden' description='Resumen de orden' imageFullUrl=''>
       <Typography variant='h1' component='h1'>
@@ -15,7 +28,7 @@ const SummaryPage = () => {
           <Card className='summary-card'>
             <CardContent>
               <Typography variant='h2' component='h2'>
-                Resumen (3 productos)
+                Resumen ({quantityItems === 1 ? '1 Producto' : `${quantityItems} Productos`})
               </Typography>
               <Divider sx={{ my: 1 }} />
               <Box display='flex' justifyContent='space-between'>
@@ -25,10 +38,11 @@ const SummaryPage = () => {
                 </NextLink>
               </Box>
 
-              <Typography>Voluptatem molestiae magni</Typography>
-              <Typography>80753 Ceasar Corner</Typography>
-              <Typography>Fond du Lac</Typography>
-              <Typography>353-586-2408</Typography>
+              <Typography>{`${name} ${surnames}`}</Typography>
+              <Typography>{address}</Typography>
+              <Typography>{`${city}, ${postalCode}`}</Typography>
+              <Typography>{countries.find((c) => c.code === country)?.name}</Typography>
+              <Typography> {`${email} ${telephone}`} </Typography>
               <Divider sx={{ my: 1 }} />
               <Box display='flex' justifyContent='end'>
                 <NextLink href='/cart' passHref>

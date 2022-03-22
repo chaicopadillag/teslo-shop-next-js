@@ -1,7 +1,7 @@
 import { createContext, FC, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
 import { cartReducer } from '../reducers';
-import { ICartProduct } from '../interfaces';
+import { ICartProduct, ShippingAddressType } from '../interfaces';
 
 export type orderSumaryType = {
   quantityItems: number;
@@ -16,6 +16,8 @@ type cartContextState = {
   updateProductQuantityInCart: (product: ICartProduct) => void;
   removeProductCart: (product: ICartProduct) => void;
   orderSumary: orderSumaryType;
+  shippingAddress?: ShippingAddressType;
+  setShippingAddress: (address: ShippingAddressType) => void;
 };
 
 const cartInitialState: cartContextState = {
@@ -29,6 +31,7 @@ const cartInitialState: cartContextState = {
     tax: 0,
     total: 0,
   },
+  setShippingAddress: (address) => {},
 };
 
 export const CartContext = createContext<cartContextState>({} as cartContextState);
@@ -73,6 +76,17 @@ export const CartProvider: FC = ({ children }) => {
     dispatch({ type: 'REMOVE_PRODUCT_FROM_CART', payload: product });
   };
 
+  const setShippingAddress = (address: ShippingAddressType) => {
+    dispatch({ type: 'SET_SHIPPING_ADDRESS', payload: address });
+  };
+
+  useEffect(() => {
+    const shippingAddress: ShippingAddressType = JSON.parse(Cookie.get('address') || '{}');
+    if (Object.keys(shippingAddress).length === 8) {
+      dispatch({ type: 'SET_SHIPPING_ADDRESS', payload: shippingAddress });
+    }
+  }, []);
+
   useEffect(() => {
     const quantityItems = state.cart.reduce((prev, current) => prev + current.quantity, 0);
     const subTotal = state.cart.reduce((prev, current) => prev + current.price * current.quantity, 0);
@@ -95,6 +109,7 @@ export const CartProvider: FC = ({ children }) => {
         addProductToCart,
         updateProductQuantityInCart,
         removeProductCart,
+        setShippingAddress,
       }}
     >
       {children}

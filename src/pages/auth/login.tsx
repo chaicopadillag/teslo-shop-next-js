@@ -28,7 +28,8 @@ const LoginPage = () => {
     try {
       const isLoggedIn = await login(email, password);
       if (isLoggedIn) {
-        router.replace('/');
+        const lastPath = router.query.p?.toString() || '/';
+        router.replace(lastPath);
       } else {
         setShowError(true);
         setTimeout(() => setShowError(false), 5000);
@@ -92,7 +93,7 @@ const LoginPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} display='flex' justifyContent='center'>
-              <NextLink href='/auth/register' passHref>
+              <NextLink href={router.query.p ? `/auth/register?p=${router.query.p.toString()}` : '/auth/register'} passHref>
                 <Link underline='hover'>¿No tienes una cuenta? Regístrate</Link>
               </NextLink>
             </Grid>

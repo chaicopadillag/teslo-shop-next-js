@@ -1,9 +1,10 @@
 import { createContext, FC, useEffect, useReducer } from 'react';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 import { tesloApi } from '../services';
 import { authReducer } from '../reducers';
 import { IUser } from '../interfaces';
-import axios from 'axios';
 
 type AuthContextState = {
   isLoggedIn: boolean;
@@ -23,6 +24,7 @@ const AuthInitialState: AuthContextState = {
 export const AuthContext = createContext<AuthContextState>({} as AuthContextState);
 
 export const AuthProvider: FC = ({ children }) => {
+  const router = useRouter();
   const [state, dispatch] = useReducer(authReducer, AuthInitialState);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export const AuthProvider: FC = ({ children }) => {
         Cookies.set('token', token, { expires: 1, path: '/', sameSite: 'strict' });
       } catch (error) {
         console.log('error verify token');
-        Cookies.remove('token');
+        Cookies.remove('token', { path: '/', sameSite: 'strict' });
       }
     }
   };
@@ -89,7 +91,10 @@ export const AuthProvider: FC = ({ children }) => {
   };
 
   const logout = () => {
-    dispatch({ type: 'LOGOUT', payload: null });
+    Cookies.remove('token', { path: '/', sameSite: 'strict' });
+    Cookies.remove('cart', { path: '/', sameSite: 'strict' });
+    router.reload();
+    // dispatch({ type: 'LOGOUT', payload: null });
   };
 
   return (
