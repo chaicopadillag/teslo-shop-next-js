@@ -1,8 +1,10 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { signIn, getSession, getProviders } from 'next-auth/react';
+import { GetServerSideProps } from 'next';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Chip, Grid, Link, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, Grid, Link, TextField, Typography, Divider } from '@mui/material';
 import { ErrorOutline } from '@mui/icons-material';
 import { AuthContext } from '../../contexts';
 import { validations } from '../../helpers';
@@ -15,8 +17,9 @@ type FormValuesType = {
 
 const LoginPage = () => {
   const router = useRouter();
-  const { login } = useContext(AuthContext);
+  // const { login } = useContext(AuthContext);
   const [showError, setShowError] = useState(false);
+  const [providers, setProviders] = useState<any>({});
 
   const {
     register,
@@ -25,18 +28,20 @@ const LoginPage = () => {
   } = useForm<FormValuesType>();
 
   const onSubmitFormValues = async ({ email, password }: FormValuesType) => {
-    try {
-      const isLoggedIn = await login(email, password);
-      if (isLoggedIn) {
-        const lastPath = router.query.p?.toString() || '/';
-        router.replace(lastPath);
-      } else {
-        setShowError(true);
-        setTimeout(() => setShowError(false), 5000);
-      }
-    } catch (error) {
-      console.log('error login');
-    }
+    setShowError(false);
+    signIn('credentials', { email, password });
+    // try {
+    //   const isLoggedIn = await login(email, password);
+    //   if (isLoggedIn) {
+    //     const lastPath = router.query.p?.toString() || '/';
+    //     router.replace(lastPath);
+    //   } else {
+    //     setShowError(true);
+    //     setTimeout(() => setShowError(false), 5000);
+    //   }
+    // } catch (error) {
+    //   console.log('error login');
+    // }
 
     // if (axios.isAxiosError(error)) {
     // setShowError(true);
@@ -47,6 +52,10 @@ const LoginPage = () => {
     //   alert(error.response?.data.message);
     // }
   };
+
+  useEffect(() => {
+    getProviders().then((providers) => setProviders(providers));
+  }, []);
 
   return (
     <AuthLayout title='Login'>
@@ -97,11 +106,40 @@ const LoginPage = () => {
                 <Link underline='hover'>¿No tienes una cuenta? Regístrate</Link>
               </NextLink>
             </Grid>
+            <Grid item xs={12} display='flex' flexDirection='column' justifyContent='center'>
+              <Divider sx={{ width: '100%', mb: 2 }} />
+              {Object.values(providers)
+                .filter((provider: any) => provider.id !== 'credentials')
+                .map((provider: any) => (
+                  <Button onClick={() => signIn(provider.id)} key={provider.id} variant='outlined' color='primary' fullWidth sx={{ mb: 1 }}>
+                    {provider.name}
+                  </Button>
+                ))}
+            </Grid>
           </Grid>
         </form>
       </Box>
     </AuthLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+  const session = await getSession({ req });
+
+  const { p = '/' } = query as { p: string };
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default LoginPage;

@@ -126,23 +126,22 @@ const AddressPage = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
-              <TextField
-                select
-                defaultValue={shippingAddress?.country || 'PER'}
+              <Select
+                value={shippingAddress?.country || 'PER'}
                 {...register('country', {
                   required: 'El país es requerido',
                 })}
                 error={!!errors.country}
-                helperText={errors.country?.message}
                 variant='filled'
                 label='País'
+                onChange={(e) => setShippingAddress({ ...shippingAddress!, country: e.target.value })}
               >
                 {countries.map(({ code, name }) => (
                   <MenuItem key={code} value={code}>
                     {name}
                   </MenuItem>
                 ))}
-              </TextField>
+              </Select>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>

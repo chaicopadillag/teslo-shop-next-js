@@ -13,7 +13,24 @@ const SummaryPage = () => {
   } = useContext(CartContext);
 
   if (!shippingAddress) {
-    return <>No hay address</>;
+    return (
+      <ShopLayout title='Resumen de orden' description='Resumen de orden' imageFullUrl=''>
+        <Typography variant='h1' component='h1'>
+          Resumen de orden
+        </Typography>
+        <Grid container>
+          <Box>
+            <NextLink href='/checkout/address' passHref>
+              <Link>
+                <Button color='secondary' className='circular-btn' fullWidth>
+                  Llenar dirección
+                </Button>
+              </Link>
+            </NextLink>
+          </Box>
+        </Grid>
+      </ShopLayout>
+    );
   }
   const { name, surnames, country, email, city, address, postalCode, telephone } = shippingAddress;
 

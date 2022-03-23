@@ -1,8 +1,10 @@
 import { useContext, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 import { Box, Button, Chip, Grid, Link, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { signIn, getSession } from 'next-auth/react';
 import { AuthLayout } from '../../components/layouts';
 import { ErrorOutline } from '@mui/icons-material';
 import { validations } from '../../helpers';
@@ -34,8 +36,9 @@ const RegisterPage = () => {
         setErrorMessage(message);
         setTimeout(() => setShowError(false), 5000);
       } else {
-        const lastPath = router.query.p?.toString() || '/';
-        router.replace(lastPath);
+        // const lastPath = router.query.p?.toString() || '/';
+        // router.replace(lastPath);
+        signIn('credentials', { email, password });
       }
     } catch (error) {
       console.log('error register');
@@ -129,6 +132,25 @@ const RegisterPage = () => {
       </Box>
     </AuthLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+  const session = await getSession({ req });
+
+  const { p = '/' } = query as { p: string };
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default RegisterPage;
