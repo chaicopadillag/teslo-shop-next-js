@@ -2,6 +2,7 @@ import { createContext, FC, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
 import { cartReducer } from '../reducers';
 import { ICartProduct, ShippingAddressType } from '../interfaces';
+import { tesloApi } from '../services';
 
 export type orderSumaryType = {
   quantityItems: number;
@@ -18,6 +19,7 @@ type cartContextState = {
   orderSumary: orderSumaryType;
   shippingAddress?: ShippingAddressType;
   setShippingAddress: (address: ShippingAddressType) => void;
+  processOrder: () => void;
 };
 
 const cartInitialState: cartContextState = {
@@ -32,6 +34,7 @@ const cartInitialState: cartContextState = {
     total: 0,
   },
   setShippingAddress: (address) => {},
+  processOrder: () => {},
 };
 
 export const CartContext = createContext<cartContextState>({} as cartContextState);
@@ -80,6 +83,13 @@ export const CartProvider: FC = ({ children }) => {
     dispatch({ type: 'SET_SHIPPING_ADDRESS', payload: address });
   };
 
+  const processOrder = async () => {
+    try {
+      const { data } = await tesloApi.post('/order', {});
+      console.log(data);
+    } catch (error) {}
+  };
+
   useEffect(() => {
     const shippingAddress: ShippingAddressType = JSON.parse(Cookie.get('address') || '{}');
     if (Object.keys(shippingAddress).length === 8) {
@@ -110,6 +120,7 @@ export const CartProvider: FC = ({ children }) => {
         updateProductQuantityInCart,
         removeProductCart,
         setShippingAddress,
+        processOrder,
       }}
     >
       {children}

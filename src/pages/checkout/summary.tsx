@@ -10,6 +10,7 @@ const SummaryPage = () => {
   const {
     shippingAddress,
     orderSumary: { quantityItems },
+    processOrder,
   } = useContext(CartContext);
 
   if (!shippingAddress) {
@@ -68,7 +69,7 @@ const SummaryPage = () => {
               </Box>
               <OrderSumary />
               <Box sx={{ mt: 3 }}>
-                <Button color='secondary' className='circular-btn' fullWidth sx={{ padding: '8px 0' }}>
+                <Button onClick={processOrder} color='secondary' className='circular-btn' fullWidth sx={{ padding: '8px 0' }}>
                   Confirmar orden
                 </Button>
               </Box>
