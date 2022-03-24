@@ -33,6 +33,7 @@ const orderSchema: Schema = new Schema<IOrder>(
     total: { type: Number, required: true },
     isPaid: { type: Boolean, default: false },
     paidAt: { type: Date },
+    transactionId: { type: String },
   },
   { timestamps: true }
 );

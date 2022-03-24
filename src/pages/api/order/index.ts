@@ -71,7 +71,7 @@ const saveOrders = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       numberOfItems,
       subTotal,
       tax,
-      total,
+      total: Math.round(total * 100) / 100,
       isPaid: false,
     };
 

@@ -12,6 +12,7 @@ export type IOrder = {
   total: number;
   isPaid: boolean;
   paidAt?: Date;
+  transactionId?: string;
 };
 
 export type IOrderItem = {

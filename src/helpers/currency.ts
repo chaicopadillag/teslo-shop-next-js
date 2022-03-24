@@ -1,7 +1,7 @@
 export const format = (value: number) => {
-  const currencyFormat = Intl.NumberFormat('pe-PE', {
+  const currencyFormat = Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'PEN',
+    currency: 'USD',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
