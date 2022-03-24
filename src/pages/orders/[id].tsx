@@ -1,48 +1,77 @@
-import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
-import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography, Chip } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
+import { getSession } from 'next-auth/react';
+import { CreditCardOffOutlined, CreditScoreOutlined, PaymentOutlined } from '@mui/icons-material';
+import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography, Chip } from '@mui/material';
 import { CartList, OrderSumary } from '../../components/cart';
 import { ShopLayout } from '../../components/layouts';
+import { ICartProduct, IOrder } from '../../interfaces';
+import { orderController } from '../../app/controllers';
+import { countries } from '../../app/database/seeders';
 
-const OrderPage = () => {
+type OrderProps = {
+  order: IOrder;
+};
+
+const OrderPage: NextPage<OrderProps> = ({ order }) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  const { orderItems, isPaid, shippingAddress, subTotal, tax, total, orderNumber, numberOfItems } = order;
+  const { name, surnames, country, email, city, address, postalCode, telephone } = shippingAddress;
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <ShopLayout title='Resumen de la orden 00222' description='Resumen de la orden' imageFullUrl=''>
-      <Typography variant='h1' component='h1'>
-        Resumen de orden
+      <Typography variant='h2' component='h2'>
+        Resumen de orden: {orderNumber}
       </Typography>
 
-      {/* <Chip sx={{ my: 2 }} label='Pendiente de pago' variant='outlined' color='error' icon={<CreditCardOffOutlined />} /> */}
-      <Chip sx={{ my: 2 }} label='Orden pagada' variant='outlined' color='success' icon={<CreditScoreOutlined />} />
+      {isPaid ? (
+        <Chip sx={{ my: 2 }} label='Orden pagada' variant='outlined' color='success' icon={<CreditScoreOutlined />} />
+      ) : (
+        <Chip sx={{ my: 2 }} label='Pendiente de pago' variant='outlined' color='error' icon={<CreditCardOffOutlined />} />
+      )}
 
-      <Grid container>
-        <CartList />
+      <Grid container className='fadeIn'>
+        {isMounted ? <CartList products={orderItems as ICartProduct[]} /> : <Grid item xs={12} sm={7}></Grid>}
         <Grid item xs={12} sm={5}>
           <Card className='summary-card'>
             <CardContent>
               <Typography variant='h2' component='h2'>
-                Resumen (3 productos)
+                Resumen ( {orderItems.length} {orderItems.length === 1 ? 'producto' : 'productos'})
               </Typography>
               <Divider sx={{ my: 1 }} />
               <Box display='flex' justifyContent='space-between'>
                 <Typography variant='subtitle1'>Dirección de entrega</Typography>
-                <NextLink href='/checkout/address' passHref>
-                  <Link underline='always'>Editar</Link>
-                </NextLink>
               </Box>
 
-              <Typography>Voluptatem molestiae magni</Typography>
-              <Typography>80753 Ceasar Corner</Typography>
-              <Typography>Fond du Lac</Typography>
-              <Typography>353-586-2408</Typography>
+              <Typography>{`${name} ${surnames}`}</Typography>
+              <Typography>{address}</Typography>
+              <Typography>{`${city}, ${postalCode}`}</Typography>
+              <Typography>{countries.find((c) => c.code === country)?.name}</Typography>
+              <Typography> {`${email} ${telephone}`} </Typography>
               <Divider sx={{ my: 1 }} />
-              <Box display='flex' justifyContent='end'>
-                <NextLink href='/cart' passHref>
-                  <Link underline='always'>Editar</Link>
-                </NextLink>
-              </Box>
-              <OrderSumary />
-              <Box sx={{ mt: 3 }}>
-                <Chip sx={{ my: 2 }} label='Pagar' variant='outlined' color='secondary' icon={<CreditScoreOutlined />} />
+              {isMounted && (
+                <OrderSumary
+                  sumary={{
+                    quantityItems: numberOfItems,
+                    subTotal,
+                    tax,
+                    total,
+                  }}
+                />
+              )}
+              <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column' }}>
+                {isPaid ? (
+                  <Chip sx={{ my: 2 }} label='Pagado' variant='outlined' color='success' icon={<CreditScoreOutlined />} />
+                ) : (
+                  <Button className='circular-btn' startIcon={<PaymentOutlined />} variant='contained' color='secondary' size='medium'>
+                    Pagar
+                  </Button>
+                )}
               </Box>
             </CardContent>
           </Card>
@@ -50,6 +79,38 @@ const OrderPage = () => {
       </Grid>
     </ShopLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+  const { id } = query as { id: string };
+
+  const session: any = await getSession({ req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/auth/login?p=/orders/${id}`,
+        permanent: false,
+      },
+    };
+  }
+
+  const order = await orderController.getOrderByIdAndUser(id, session.user._id);
+
+  if (!order) {
+    return {
+      redirect: {
+        destination: '/orders/history',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      order,
+    },
+  };
 };
 
 export default OrderPage;

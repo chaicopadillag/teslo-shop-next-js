@@ -1,12 +1,18 @@
-import { useContext } from 'react';
+import { FC, useContext } from 'react';
 import { Divider, Grid, Typography } from '@mui/material';
 import { CartContext } from '../../contexts';
 import { currency } from '../../helpers';
+import { OrderSumaryType } from '../../contexts/CartContext';
 
-export const OrderSumary = () => {
-  const {
-    orderSumary: { quantityItems, subTotal, tax, total },
-  } = useContext(CartContext);
+type OrderSumaryProps = {
+  sumary?: OrderSumaryType;
+};
+
+export const OrderSumary: FC<OrderSumaryProps> = ({ sumary }) => {
+  const { orderSumary } = useContext(CartContext);
+
+  const ordSumary = sumary || orderSumary;
+  const { quantityItems, subTotal, tax, total } = ordSumary;
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -14,7 +20,7 @@ export const OrderSumary = () => {
       </Grid>
       <Grid item xs={6} display='flex' justifyContent='end'>
         <Typography>
-          {quantityItems} {quantityItems === 1 ? 'Producto' : 'Productos'}
+          {quantityItems} {quantityItems <= 1 ? 'Producto' : 'Productos'}
         </Typography>
       </Grid>
       <Grid item xs={6}>

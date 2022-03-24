@@ -9,18 +9,21 @@ import { currency } from '../../helpers';
 
 type CartListProps = {
   editable?: boolean;
+  products?: ICartProduct[];
 };
 
-export const CartList: FC<CartListProps> = ({ editable = false }) => {
+export const CartList: FC<CartListProps> = ({ editable = false, products }) => {
   const { cart, updateProductQuantityInCart, removeProductCart } = useContext(CartContext);
 
   const changeQuantity = (product: ICartProduct, quantity: number) => {
     updateProductQuantityInCart({ ...product, quantity });
   };
 
+  const productsInCart = products || cart;
+
   return (
     <Grid item xs={12} sm={7}>
-      {cart.map((product) => (
+      {productsInCart.map((product) => (
         <Grid container spacing={2} key={`/product/${product.slug}_${product.size}`} sx={{ mb: 1 }}>
           <Grid item xs={12} sm={3}>
             <NextLink href={`/product/${product.slug}`} passHref>

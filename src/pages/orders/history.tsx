@@ -1,11 +1,15 @@
+import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
 import { Typography, Grid, Chip, Link, Button } from '@mui/material';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { ShopLayout } from '../../components/layouts';
 import { VisibilityOutlined } from '@mui/icons-material';
+import { getSession } from 'next-auth/react';
+import { orderController } from '../../app/controllers';
+import { IOrder } from '../../interfaces';
 
 const colums: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 100 },
+  { field: 'item', headerName: 'N°', width: 100 },
   { field: 'fullname', headerName: 'Nombre completo', width: 300 },
   {
     field: 'paid',
@@ -36,29 +40,55 @@ const colums: GridColDef[] = [
   },
 ];
 
-const rows = [
-  { id: 1, paid: false, fullname: 'Juan Perez' },
-  { id: 2, paid: true, fullname: 'Allan Baumbach' },
-  { id: 3, paid: false, fullname: 'Ashley Buckridge' },
-  { id: 4, paid: true, fullname: 'Bryanna Schulist' },
-  { id: 5, paid: false, fullname: 'Kelton Kirlin' },
-  { id: 6, paid: true, fullname: 'Kenny Schowalter' },
-];
+type HistoryProps = {
+  orders: IOrder[];
+};
 
-const HistoryPage = () => {
+const HistoryPage: NextPage<HistoryProps> = ({ orders }) => {
+  const rows = orders.map((order, i) => ({
+    item: i + 1,
+    id: order._id,
+    paid: order.isPaid,
+    fullname: `${order.shippingAddress.name} ${order.shippingAddress.surnames}`,
+  }));
+
   return (
     <ShopLayout title='Historial de ordenes' description='Historial de ordenes del cliente' imageFullUrl=''>
       <Typography variant='h1' component='h1'>
         Hitorial de Ordenes
       </Typography>
 
-      <Grid container>
+      <Grid container className='fadeIn'>
         <Grid item xs={12} sx={{ height: 650, width: '100%' }}>
           <DataGrid rows={rows} columns={colums} pageSize={10} rowsPerPageOptions={[10]} />
         </Grid>
       </Grid>
     </ShopLayout>
   );
+};
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session: any = await getSession({ req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/login?p=orders/history',
+        permanent: false,
+      },
+    };
+  }
+
+  const orders = await orderController.getOrdersByUser(session.user._id);
+
+  return {
+    props: {
+      orders,
+    },
+  };
 };
 
 export default HistoryPage;

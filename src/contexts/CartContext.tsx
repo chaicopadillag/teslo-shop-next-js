@@ -5,7 +5,7 @@ import { cartReducer } from '../reducers';
 import { ICartProduct, IOrder, ShippingAddressType } from '../interfaces';
 import { tesloApi } from '../services';
 
-export type orderSumaryType = {
+export type OrderSumaryType = {
   quantityItems: number;
   subTotal: number;
   tax: number;
@@ -17,7 +17,7 @@ type cartContextState = {
   addProductToCart: (product: ICartProduct) => void;
   updateProductQuantityInCart: (product: ICartProduct) => void;
   removeProductCart: (product: ICartProduct) => void;
-  orderSumary: orderSumaryType;
+  orderSumary: OrderSumaryType;
   shippingAddress?: ShippingAddressType;
   setShippingAddress: (address: ShippingAddressType) => void;
   processOrder: () => Promise<{ hasError: boolean; message: string; data: IOrder }>;
