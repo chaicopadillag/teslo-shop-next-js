@@ -5,6 +5,7 @@ import { RemoveShoppingCartOutlined } from '@mui/icons-material';
 import { ItemProductCounter } from '../products';
 import { CartContext } from '../../contexts';
 import { ICartProduct } from '../../interfaces';
+import { currency } from '../../helpers';
 
 type CartListProps = {
   editable?: boolean;
@@ -46,7 +47,7 @@ export const CartList: FC<CartListProps> = ({ editable = false }) => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={2} display='flex' alignItems='center' flexDirection='column'>
-            <Typography variant='subtitle1'>$ {product.price}</Typography>
+            <Typography variant='subtitle1'>{currency.format(product.price)}</Typography>
             {editable && (
               <IconButton title='Elimincar del carrito' onClick={() => removeProductCart(product)}>
                 <RemoveShoppingCartOutlined />

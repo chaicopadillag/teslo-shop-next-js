@@ -1,7 +1,8 @@
 import { createContext, FC, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
+import axios from 'axios';
 import { cartReducer } from '../reducers';
-import { ICartProduct, ShippingAddressType } from '../interfaces';
+import { ICartProduct, IOrder, ShippingAddressType } from '../interfaces';
 import { tesloApi } from '../services';
 
 export type orderSumaryType = {
@@ -19,7 +20,7 @@ type cartContextState = {
   orderSumary: orderSumaryType;
   shippingAddress?: ShippingAddressType;
   setShippingAddress: (address: ShippingAddressType) => void;
-  processOrder: () => void;
+  processOrder: () => Promise<{ hasError: boolean; message: string; data: IOrder }>;
 };
 
 const cartInitialState: cartContextState = {
@@ -34,7 +35,7 @@ const cartInitialState: cartContextState = {
     total: 0,
   },
   setShippingAddress: (address) => {},
-  processOrder: () => {},
+  processOrder: () => ({} as Promise<{ hasError: boolean; message: string; data: IOrder }>),
 };
 
 export const CartContext = createContext<cartContextState>({} as cartContextState);
@@ -85,9 +86,29 @@ export const CartProvider: FC = ({ children }) => {
 
   const processOrder = async () => {
     try {
-      const { data } = await tesloApi.post('/order', {});
-      console.log(data);
-    } catch (error) {}
+      if (!state.shippingAddress) throw new Error('No tienes dirección de envío');
+
+      const order: IOrder = {
+        orderItems: state.cart.map((item) => ({ ...item, size: item.size! })),
+        shippingAddress: state.shippingAddress,
+        numberOfItems: state.orderSumary.quantityItems,
+        subTotal: state.orderSumary.subTotal,
+        tax: state.orderSumary.tax,
+        total: state.orderSumary.total,
+        isPaid: false,
+      };
+
+      const { data } = await tesloApi.post('/order', order);
+
+      dispatch({ type: 'CLEAR_CART' });
+
+      return { hasError: false, message: 'Orden procesada', data };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return { hasError: true, message: error.response?.data.message, data: {} as IOrder };
+      }
+      return { hasError: true, message: 'Error al procesar orden', data: {} as IOrder };
+    }
   };
 
   useEffect(() => {

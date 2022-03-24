@@ -27,7 +27,8 @@ type CartActionType =
   | {
       type: 'SET_SHIPPING_ADDRESS';
       payload: ShippingAddressType;
-    };
+    }
+  | { type: 'CLEAR_CART' };
 
 export const cartReducer = (cartState: CartStateType, action: CartActionType): CartStateType => {
   switch (action.type) {
@@ -64,6 +65,17 @@ export const cartReducer = (cartState: CartStateType, action: CartActionType): C
       return {
         ...cartState,
         shippingAddress: action.payload,
+      };
+    case 'CLEAR_CART':
+      return {
+        ...cartState,
+        cart: [],
+        orderSumary: {
+          quantityItems: 0,
+          subTotal: 0,
+          tax: 0,
+          total: 0,
+        },
       };
 
     default:

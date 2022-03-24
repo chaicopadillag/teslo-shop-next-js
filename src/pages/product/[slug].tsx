@@ -8,6 +8,7 @@ import { ICartProduct, IProduct, ISize } from '../../interfaces';
 import { productController } from '../../app/controllers';
 import { CartContext } from '../../contexts';
 import { useRouter } from 'next/router';
+import { currency } from '../../helpers';
 
 type ProductPageProps = {
   product: IProduct;
@@ -58,7 +59,7 @@ const ProductPage: NextPage<ProductPageProps> = ({ product }) => {
               {product.title}
             </Typography>
             <Typography variant='subtitle1' component='h2'>
-              ${product.price}
+              {currency.format(product.price)}
             </Typography>
             <Box sx={{ my: 2 }}>
               <Typography variant='subtitle2' component='h6'>

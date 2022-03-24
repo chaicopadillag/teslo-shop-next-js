@@ -1,17 +1,22 @@
-import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from '@mui/material';
+import { useContext, useState } from 'react';
 import NextLink from 'next/link';
-import { useContext } from 'react';
-import { countries } from '../../app/database/seeders';
-import { CartList, OrderSumary } from '../../components/cart';
-import { ShopLayout } from '../../components/layouts';
+import { useRouter } from 'next/router';
+import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography, Chip } from '@mui/material';
 import { CartContext } from '../../contexts';
+import { countries } from '../../app/database/seeders';
+import { ShopLayout } from '../../components/layouts';
+import { CartList, OrderSumary } from '../../components/cart';
 
 const SummaryPage = () => {
+  const router = useRouter();
   const {
     shippingAddress,
     orderSumary: { quantityItems },
     processOrder,
   } = useContext(CartContext);
+
+  const [isPosting, setIsPosting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   if (!shippingAddress) {
     return (
@@ -34,6 +39,19 @@ const SummaryPage = () => {
     );
   }
   const { name, surnames, country, email, city, address, postalCode, telephone } = shippingAddress;
+
+  const handleOrder = async () => {
+    setIsPosting(true);
+    setErrorMessage('');
+    const { hasError, message, data } = await processOrder();
+    if (hasError) {
+      setErrorMessage(message);
+      setIsPosting(false);
+      return;
+    }
+
+    router.push(`/orders/${data._id}`);
+  };
 
   return (
     <ShopLayout title='Resumen de orden' description='Resumen de orden' imageFullUrl=''>
@@ -69,9 +87,10 @@ const SummaryPage = () => {
               </Box>
               <OrderSumary />
               <Box sx={{ mt: 3 }}>
-                <Button onClick={processOrder} color='secondary' className='circular-btn' fullWidth sx={{ padding: '8px 0' }}>
+                <Button onClick={handleOrder} color='secondary' className='circular-btn' disabled={isPosting} fullWidth sx={{ padding: '8px 0' }}>
                   Confirmar orden
                 </Button>
+                {errorMessage && <Chip color='error' variant='outlined' label={errorMessage} sx={{ width: '100%', mt: 1 }} />}
               </Box>
             </CardContent>
           </Card>

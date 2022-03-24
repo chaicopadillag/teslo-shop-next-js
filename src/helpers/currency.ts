@@ -5,5 +5,5 @@ export const format = (value: number) => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return currencyFormat.format(value) /*.replace(/\PEN/g, 'S/')*/;
+  return currencyFormat.format(value);
 };
