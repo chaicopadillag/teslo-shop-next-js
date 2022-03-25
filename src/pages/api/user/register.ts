@@ -46,11 +46,11 @@ const registerUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
       });
     }
 
-    db.connect();
+    await db.connect();
     const userEmail = await User.findOne({ email }).lean();
 
     if (userEmail) {
-      db.disconnect();
+      await db.disconnect();
       return res.status(422).json({
         message: 'El correo electrónico ya está registrado',
       });
@@ -63,7 +63,7 @@ const registerUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
       name,
     });
 
-    db.disconnect();
+    await db.disconnect();
 
     const token = jwt.generateToken({ _id: user._id, email: user.email });
 

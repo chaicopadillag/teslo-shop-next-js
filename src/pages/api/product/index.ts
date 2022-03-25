@@ -31,11 +31,11 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       query = { gender };
     }
 
-    db.connect();
+    await db.connect();
 
     const products = await Product.find(query).select('title images price inStock slug -_id').lean();
 
-    db.disconnect();
+    await db.disconnect();
 
     return res.json(products);
   } catch (error) {

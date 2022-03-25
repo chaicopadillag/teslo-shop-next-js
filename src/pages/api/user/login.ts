@@ -28,10 +28,10 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   try {
     const { email = '', password = '' } = req.body as { email: string; password: string };
 
-    db.connect();
+    await db.connect();
 
     const user = await User.findOne({ email }).select('name email role password').lean();
-    db.disconnect();
+    await db.disconnect();
 
     if (!user) {
       return res.status(401).json({

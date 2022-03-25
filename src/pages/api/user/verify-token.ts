@@ -29,11 +29,11 @@ const verifyTokenUser = async (req: NextApiRequest, res: NextApiResponse<Data>) 
 
     const payload = await jwt.verifyToken(token);
 
-    db.connect();
+    await db.connect();
 
     const user = await User.findById(payload._id);
 
-    db.disconnect();
+    await db.disconnect();
 
     if (!user) {
       return res.status(401).json({

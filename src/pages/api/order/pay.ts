@@ -73,18 +73,18 @@ const payOrderInPaypal = async (req: NextApiRequest, res: NextApiResponse<Data>)
       });
     }
 
-    db.connect();
+    await db.connect();
     const order = await Order.findById(orderId);
 
     if (!order) {
-      db.disconnect();
+      await db.disconnect();
       return res.status(422).json({
         message: 'No se encontró el pedido en la base de datos',
       });
     }
 
     if (order.total !== Number(data.purchase_units[0].amount.value)) {
-      db.disconnect();
+      await db.disconnect();
       return res.status(422).json({
         message: 'El total del pedido no coincide con el total de PayPal',
       });
@@ -93,6 +93,7 @@ const payOrderInPaypal = async (req: NextApiRequest, res: NextApiResponse<Data>)
     order.isPaid = true;
     order.transactionId = transactionId;
     await order.save();
+    await db.disconnect();
 
     return res.status(200).json({
       message: 'Pago realizado con éxito',

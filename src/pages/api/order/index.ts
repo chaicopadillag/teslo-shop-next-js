@@ -36,7 +36,7 @@ const saveOrders = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
     const productIds = orderItems.map((item) => item._id);
 
-    db.connect();
+    await db.connect();
 
     const products = await Product.find({ _id: { $in: productIds } })
       .select('_id price inStock')
@@ -77,11 +77,11 @@ const saveOrders = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
     const order = await Order.create(newOrder);
 
-    db.disconnect();
+    await db.disconnect();
 
     return res.status(201).json(order);
   } catch (error: any) {
-    db.disconnect();
+    await db.disconnect();
     return res.status(400).json({
       message: error.message || 'Error al guardar la orden',
     });

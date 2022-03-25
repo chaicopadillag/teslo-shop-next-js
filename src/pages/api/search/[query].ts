@@ -30,13 +30,13 @@ const searchProductByQuery = async (req: NextApiRequest, res: NextApiResponse<Da
       });
     }
 
-    db.connect();
+    await db.connect();
 
     const productos = await Product.find({ $text: { $search: query.toLocaleLowerCase() } })
       .select('title images price inStock slug -_id')
       .lean();
 
-    db.disconnect();
+    await db.disconnect();
 
     return res.json(productos);
   } catch (error) {

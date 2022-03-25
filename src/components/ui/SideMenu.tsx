@@ -14,6 +14,7 @@ import {
   VpnKeyOutlined,
 } from '@mui/icons-material';
 import { AuthContext, UIContext } from '../../contexts';
+import { DashboardOutlined } from '@mui/icons-material';
 
 export const SideMenu = () => {
   const { push, asPath } = useRouter();
@@ -116,20 +117,26 @@ export const SideMenu = () => {
               <Divider />
               <ListSubheader>Admin Panel</ListSubheader>
 
-              <ListItem button>
+              <ListItem button onClick={() => onNavTo('/dashboard')}>
+                <ListItemIcon>
+                  <DashboardOutlined />
+                </ListItemIcon>
+                <ListItemText primary={'Dashboard'} />
+              </ListItem>
+              <ListItem button onClick={() => onNavTo('/dashboard/products')}>
                 <ListItemIcon>
                   <CategoryOutlined />
                 </ListItemIcon>
                 <ListItemText primary={'Productos'} />
               </ListItem>
-              <ListItem button>
+              <ListItem button onClick={() => onNavTo('/dashboard/order')}>
                 <ListItemIcon>
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
                 <ListItemText primary={'Ordenes'} />
               </ListItem>
 
-              <ListItem button>
+              <ListItem button onClick={() => onNavTo('/dashboard/user')}>
                 <ListItemIcon>
                   <AdminPanelSettings />
                 </ListItemIcon>

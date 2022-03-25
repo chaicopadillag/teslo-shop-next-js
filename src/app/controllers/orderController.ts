@@ -10,7 +10,7 @@ import { IOrder } from '../../interfaces';
 export const getOrderByIdAndUser = async (orderId: string, userId: string): Promise<IOrder | null> => {
   if (!isValidObjectId(orderId) || !isValidObjectId(userId)) return null;
   try {
-    db.connect();
+    await db.connect();
     const order = await Order.findOne({ _id: orderId, user: userId }).lean();
     db.disconnect();
 
@@ -26,7 +26,7 @@ export const getOrderByIdAndUser = async (orderId: string, userId: string): Prom
 export const getOrdersByUser = async (userId: string): Promise<IOrder[]> => {
   if (!isValidObjectId(userId)) return [];
   try {
-    db.connect();
+    await db.connect();
 
     console.log(userId);
 

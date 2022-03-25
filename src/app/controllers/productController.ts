@@ -9,11 +9,11 @@ import { db } from '../database';
  */
 export const getProductBySlug = async (slug: string): Promise<IProduct | null> => {
   try {
-    db.connect();
+    await db.connect();
 
     const product = await Product.findOne({ slug }).lean();
 
-    db.disconnect();
+    await db.disconnect();
 
     return JSON.parse(JSON.stringify(product));
   } catch (error) {
@@ -31,11 +31,11 @@ type ProductSlug = {
  */
 export const getProductsWithSlug = async (): Promise<ProductSlug[]> => {
   try {
-    db.connect();
+    await db.connect();
 
     const products = await Product.find().select('slug -_id').lean();
 
-    db.disconnect();
+    await db.disconnect();
 
     return products;
   } catch (error) {
@@ -52,7 +52,7 @@ export const getProductsWithSlug = async (): Promise<ProductSlug[]> => {
 export const searchProductsByKeyword = async (keyword: string): Promise<IProduct[]> => {
   try {
     keyword = keyword.toLowerCase();
-    db.connect();
+    await db.connect();
     const products = await Product.find({
       $text: {
         $search: keyword,
@@ -61,7 +61,7 @@ export const searchProductsByKeyword = async (keyword: string): Promise<IProduct
       .select('title images price inStock slug -_id')
       .lean();
 
-    db.disconnect();
+    await db.disconnect();
 
     return products;
   } catch (error) {
@@ -76,11 +76,11 @@ export const searchProductsByKeyword = async (keyword: string): Promise<IProduct
  */
 export const getAllProducts = async (): Promise<IProduct[]> => {
   try {
-    db.connect();
+    await db.connect();
 
     const products = await Product.find().lean();
 
-    db.disconnect();
+    await db.disconnect();
 
     return JSON.parse(JSON.stringify(products));
   } catch (error) {

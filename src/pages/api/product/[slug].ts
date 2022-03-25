@@ -24,11 +24,11 @@ const getProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>)
   try {
     const { slug } = req.query as { slug: string };
 
-    db.connect();
+    await db.connect();
 
     const product = await Product.findOne({ slug }).select('-__v').lean();
 
-    db.disconnect();
+    await db.disconnect();
 
     if (!product) {
       return res.status(404).json({

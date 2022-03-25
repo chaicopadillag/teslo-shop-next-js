@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '../../../app/database';
-import { Product, User } from '../../../app/models';
+import { Order, Product, User } from '../../../app/models';
 import { productSeeder, userSeeder } from '../../../app/database/seeders';
 
 type Data = {
@@ -21,14 +21,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 
 async function sendSeedDatabase(res: NextApiResponse<Data>) {
   try {
-    db.connect();
+    await db.connect();
 
     await User.deleteMany();
     await User.insertMany(userSeeder.users);
 
     await Product.deleteMany();
     await Product.insertMany(productSeeder.products);
-    db.disconnect();
+
+    await Order.deleteMany();
+    await db.disconnect();
     return res.status(201).json({ message: 'Send seeders database success full' });
   } catch (error) {
     console.log(error);
