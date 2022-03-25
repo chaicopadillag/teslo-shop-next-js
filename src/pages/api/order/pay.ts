@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 import { isValidObjectId } from 'mongoose';
 import { IOrderDetailsPaypal } from '../../../interfaces';
 import { db } from '../../../app/database';
@@ -30,6 +31,14 @@ export default function handlerPay(req: NextApiRequest, res: NextApiResponse<Dat
 const payOrderInPaypal = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   try {
     const PAYPAL_ORDERS_URL = process.env.PAYPAL_ORDERS_URL || '';
+
+    const session = await getSession({ req });
+
+    if (!session) {
+      return res.status(401).json({
+        message: 'Unauthorized',
+      });
+    }
 
     const { orderId = '', transactionId = '' } = req.body as { orderId: string; transactionId: string };
 

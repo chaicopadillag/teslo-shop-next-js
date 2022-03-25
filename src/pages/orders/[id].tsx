@@ -1,25 +1,57 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
 import { getSession } from 'next-auth/react';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { CreditCardOffOutlined, CreditScoreOutlined, PaymentOutlined } from '@mui/icons-material';
-import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography, Chip } from '@mui/material';
+import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography, Chip, CircularProgress } from '@mui/material';
 import { CartList, OrderSumary } from '../../components/cart';
 import { ShopLayout } from '../../components/layouts';
 import { ICartProduct, IOrder } from '../../interfaces';
 import { orderController } from '../../app/controllers';
 import { countries } from '../../app/database/seeders';
+import axios from 'axios';
+import { tesloApi } from '../../services';
+
+type OrderResponseBody = {
+  id: string;
+  status: 'COMPLETED' | 'SAVED' | 'APPROVED' | 'VOIDED' | 'PAYER_ACTION_REQUIRED';
+};
 
 type OrderProps = {
   order: IOrder;
 };
 
 const OrderPage: NextPage<OrderProps> = ({ order }) => {
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
 
   const { orderItems, isPaid, shippingAddress, subTotal, tax, total, orderNumber, numberOfItems } = order;
   const { name, surnames, country, email, city, address, postalCode, telephone } = shippingAddress;
+
+  const onPayment = async (detail: OrderResponseBody) => {
+    if (detail.status !== 'COMPLETED') {
+      return alert('Payment failed');
+    }
+    setIsPaying(true);
+    try {
+      const { data } = await tesloApi.post(`/order/pay`, {
+        orderId: order._id,
+        transactionId: detail.id,
+      });
+      // alert(data.message);
+      router.reload();
+    } catch (error) {
+      setIsPaying(false);
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message);
+      }
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -68,6 +100,10 @@ const OrderPage: NextPage<OrderProps> = ({ order }) => {
               <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column' }}>
                 {isPaid ? (
                   <Chip sx={{ my: 2 }} label='Pagado' variant='outlined' color='success' icon={<CreditScoreOutlined />} />
+                ) : isPaying ? (
+                  <Box display='flex' justifyContent='center' className='fadeIn'>
+                    <CircularProgress color='secondary' />
+                  </Box>
                 ) : (
                   <PayPalButtons
                     createOrder={(data, actions) => {
@@ -83,8 +119,9 @@ const OrderPage: NextPage<OrderProps> = ({ order }) => {
                     }}
                     onApprove={(data, actions) => {
                       return actions.order!.capture().then((details) => {
-                        console.log(details);
-                        const name = details.payer.name.given_name;
+                        onPayment(details);
+                        // console.log(details);
+                        // const name = details.payer.name.given_name;
                         // alert(`Transaction completed by ${name}`);
                       });
                     }}
