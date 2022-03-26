@@ -124,7 +124,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
-      product,
+      product: {
+        ...product,
+        images: product.images.map((image) => (image.includes('https://') ? image : `${process.env.APP_URL}/products/${image}`)),
+      },
     },
     revalidate: 864000,
   };

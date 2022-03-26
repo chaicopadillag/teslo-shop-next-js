@@ -123,7 +123,7 @@ export const SideMenu = () => {
                 </ListItemIcon>
                 <ListItemText primary={'Dashboard'} />
               </ListItem>
-              <ListItem button onClick={() => onNavTo('/dashboard/products')}>
+              <ListItem button onClick={() => onNavTo('/dashboard/product')}>
                 <ListItemIcon>
                   <CategoryOutlined />
                 </ListItemIcon>

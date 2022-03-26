@@ -42,7 +42,7 @@ const OrderPage = () => {
 
   if (!data) {
     return (
-      <DashboardLayout title='Usuarios' subTitle='Mantenimiento de usuarios' icon={<ConfirmationNumberOutlined />}>
+      <DashboardLayout title='Ordenes' subTitle='Mantenimiento de ordenes' icon={<ConfirmationNumberOutlined />}>
         <Grid container className='fadeIn'>
           <Grid container justifyContent='center'>
             <CircularProgress />

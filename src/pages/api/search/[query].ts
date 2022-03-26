@@ -38,7 +38,12 @@ const searchProductByQuery = async (req: NextApiRequest, res: NextApiResponse<Da
 
     await db.disconnect();
 
-    return res.json(productos);
+    return res.json(
+      productos.map((product) => ({
+        ...product,
+        images: product.images.map((image) => (image.includes('https://') ? image : `${process.env.APP_URL}/products/${image}`)),
+      }))
+    );
   } catch (error) {
     console.log(error);
     return res.status(500).json({

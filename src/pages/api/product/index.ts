@@ -37,7 +37,12 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
     await db.disconnect();
 
-    return res.json(products);
+    return res.json(
+      products.map((product) => ({
+        ...product,
+        images: product.images.map((image) => (image.includes('https://') ? image : `${process.env.APP_URL}/products/${image}`)),
+      }))
+    );
   } catch (error) {
     return res.status(500).json({
       message: 'Internal Server Error',
