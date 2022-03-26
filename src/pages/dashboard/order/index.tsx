@@ -1,8 +1,10 @@
-import { Chip, CircularProgress, Grid, ListItemIcon } from '@mui/material';
+import { Chip, CircularProgress, Grid } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { DashboardLayout } from '../../components/layouts';
+import { DashboardLayout } from '../../../components/layouts';
 import useSWR from 'swr';
-import { IOrder } from '../../interfaces';
+import { IOrder } from '../../../interfaces';
+import { currency } from '../../../helpers';
+import { ConfirmationNumberOutlined } from '@mui/icons-material';
 
 const columns: GridColDef[] = [
   { field: 'item', headerName: 'N°', width: 100 },
@@ -11,6 +13,7 @@ const columns: GridColDef[] = [
   { field: 'address', headerName: 'Dirección', width: 200 },
   { field: 'phone', headerName: 'Teléfono', width: 200 },
   { field: 'inStock', headerName: 'N° Productos', width: 200 },
+  { field: 'total', headerName: 'Monto Total', width: 200 },
   { field: 'createdAt', headerName: 'Fecha de pedido', width: 200 },
   {
     field: 'status',
@@ -26,7 +29,7 @@ const columns: GridColDef[] = [
     width: 200,
     renderCell: ({ row }) => {
       return (
-        <a href={`/admin/order/${row.id}`} target='_blank' rel='noreferrer'>
+        <a href={`/dashboard/order/${row.id}`} target='_blank' rel='noreferrer'>
           Ver orden
         </a>
       );
@@ -39,7 +42,7 @@ const OrderPage = () => {
 
   if (!data) {
     return (
-      <DashboardLayout title='Usuarios' subTitle='Mantenimiento de usuarios' icon={<ListItemIcon />}>
+      <DashboardLayout title='Usuarios' subTitle='Mantenimiento de usuarios' icon={<ConfirmationNumberOutlined />}>
         <Grid container className='fadeIn'>
           <Grid container justifyContent='center'>
             <CircularProgress />
@@ -56,12 +59,13 @@ const OrderPage = () => {
     address: order.shippingAddress.address,
     phone: order.shippingAddress.telephone,
     inStock: order.numberOfItems,
+    total: currency.format(order.total),
     status: order.isPaid,
     createdAt: order.createdAt,
   }));
 
   return (
-    <DashboardLayout title={'Ordenes'} subTitle={'Listado de todas las ordenes'} icon={<ListItemIcon />}>
+    <DashboardLayout title={'Ordenes'} subTitle={'Listado de todas las ordenes'} icon={<ConfirmationNumberOutlined />}>
       <Grid container className='fadeIn'>
         <Grid item xs={12} sx={{ height: 650, width: '100%' }}>
           <DataGrid rows={rows} columns={columns} pageSize={10} rowsPerPageOptions={[10]} />

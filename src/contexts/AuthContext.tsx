@@ -72,7 +72,7 @@ export const AuthProvider: FC = ({ children }) => {
 
       const { token, user } = data;
 
-      Cookies.set('token', token, { expires: 1, path: '/', sameSite: 'strict' });
+      // Cookies.set('token', token, { expires: 1, path: '/', sameSite: 'strict' });
 
       dispatch({ type: 'LOGIN', payload: user });
 

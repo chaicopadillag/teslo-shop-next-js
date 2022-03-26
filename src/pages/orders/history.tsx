@@ -67,16 +67,13 @@ const HistoryPage: NextPage<HistoryProps> = ({ orders }) => {
   );
 };
 
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session: any = await getSession({ req });
 
   if (!session) {
     return {
       redirect: {
-        destination: '/auth/login?p=orders/history',
+        destination: '/auth/login?p=/orders/history',
         permanent: false,
       },
     };

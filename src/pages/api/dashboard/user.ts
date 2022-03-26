@@ -42,7 +42,7 @@ const getAllUsers = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 const updateUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   try {
     const { id, role } = req.body as { id: string; role: string };
-    console.log(req.body);
+
     if (!isValidObjectId(id)) {
       return res.status(422).json({
         message: 'Invalid id',

@@ -42,3 +42,27 @@ export const getOrdersByUser = async (userId: string): Promise<IOrder[]> => {
     return [];
   }
 };
+
+/**
+ *
+ * @param orderId
+ * @returns
+ */
+export const getOrderById = async (orderId: string): Promise<IOrder | null> => {
+  if (!isValidObjectId(orderId)) return null;
+
+  try {
+    await db.connect();
+
+    const order = await Order.findById(orderId).lean();
+
+    db.disconnect();
+
+    if (!order) return null;
+
+    return JSON.parse(JSON.stringify(order));
+  } catch (error) {
+    console.log('error in getOrderByIdAndUser');
+    return null;
+  }
+};

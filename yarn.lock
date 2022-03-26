@@ -391,7 +391,7 @@
   dependencies:
     promise-polyfill "^8.2.1"
 
-"@paypal/react-paypal-js@^7.6.0":
+"@paypal/react-paypal-js@7.6.0":
   version "7.6.0"
   resolved "https://registry.yarnpkg.com/@paypal/react-paypal-js/-/react-paypal-js-7.6.0.tgz#4161739263daf72f646c87d12c2225cf50c76f13"
   integrity sha512-GPaFXOVEh2bCNKOmLmArxWoBM6gfzoP41HfDdEr58geJi+t32/FtVKdaoxymE6f3oStaobt6KDdzxPpKuNeisQ==

@@ -16,6 +16,7 @@ export async function middleware(req: NextRequest | any, ev: NextFetchEvent) {
   if (!validRoles.includes(session.user.role)) {
     return NextResponse.redirect(`${url.origin}/404`);
   }
+  console.log('dashboard middleware');
 
   return NextResponse.next();
 }
