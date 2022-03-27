@@ -17,4 +17,6 @@ http://localhost:3000/api/seed/database
 ```
 
 Link To Demo
-![Teslo Shop](https://github.com/chaicopadillag/teslo-shop-next-js/main/screenshot.png)
+[Teslo Shop](https://teslo-shop.herokuapp.com)
+
+![Teslo Shop](https://raw.githubusercontent.com/chaicopadillag/teslo-shop-next-js/main/screenshot.png)
