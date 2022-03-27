@@ -16,5 +16,5 @@ http://localhost:3000/api/seed/database
 
 ```
 
-view screenshot
-![Open Jira](https://raw.githubusercontent.com/chaicopadillag/open-jira-next-js/main/screenshot.png)
+Link To Demo
+![Teslo Shop](https://github.com/chaicopadillag/teslo-shop-next-js/main/screenshot.png)
