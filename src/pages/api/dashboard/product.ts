@@ -102,7 +102,7 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
       if (!images.includes(image)) {
         // Borrar de cloudinary
         const [fileId, extension] = image.substring(image.lastIndexOf('/') + 1).split('.');
-        console.log({ image, fileId, extension });
+        // console.log({ image, fileId, extension });
         await cloudinary.uploader.destroy(fileId);
       }
     }
